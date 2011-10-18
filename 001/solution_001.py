@@ -11,7 +11,7 @@ def main():
             if not n % m:
                 multiples.append(n)
 
-    print multiples, '=', sum(multiples)
+    print sum(multiples)
 
 
 if __name__ == '__main__':
