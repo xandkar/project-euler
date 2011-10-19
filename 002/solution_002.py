@@ -1,6 +1,12 @@
-fibonacci = [1, 2]
+def fibonacci(ceiling):
+    a = 0
+    b = 1
+    fib = a + b
 
-while fibonacci[-2] + fibonacci[-1] <= 4000000:
-    fibonacci.append(fibonacci[-1] + fibonacci[-2])
+    while fib < ceiling:
+        yield fib
+        a = b
+        b = fib
+        fib = a + b
 
-print sum([f for f in fibonacci if not f % 2])
+print sum(f for f in fibonacci(4000000) if not f % 2)
