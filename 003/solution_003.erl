@@ -32,12 +32,16 @@ largest_prime_factor(Target) ->
 largest_prime_factor(_, _, CurrentCandidate, LastCandidate)
     when CurrentCandidate =< LastCandidate ->
         "N/A";
-largest_prime_factor(Target, ReducedTarget, CurrentCandidate, LastCandidate) ->
-     case (Target rem CurrentCandidate == 0) and is_prime(CurrentCandidate) of
+largest_prime_factor(Target, ReducedTarget, CurrentCandidate, LastCandidate)
+    when Target rem CurrentCandidate == 0 ->
+     case is_prime(CurrentCandidate) of
         true -> CurrentCandidate;
         false -> largest_prime_factor(Target, ReducedTarget,
                                       CurrentCandidate - 2, LastCandidate)
-    end.
+    end;
+largest_prime_factor(Target, ReducedTarget, CurrentCandidate, LastCandidate) ->
+    largest_prime_factor(Target, ReducedTarget,
+                         CurrentCandidate - 2, LastCandidate).
 
 
 solution(Target) ->
