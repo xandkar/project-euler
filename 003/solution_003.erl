@@ -2,49 +2,47 @@
 -export([start/0]).
 
 
-%
-% The following solution works, but is extremely inefficient for large numbers
-% (like the one the problem is actually asking for). BEAM could not allocate
-% heap on a 16GB node (and crashed)!
-%
-% TODO: Read-up on efficient prime generation.
-% TODO: Consider these thoughts/ideas:
-%           - Chunk the computation.
-%           - May be not all the cases need to be tested?
-%           - If we only need the largest, may be we can track only the largest
-%             factor/prime candidate instead of the whole list?
-%           - Check for factor and prime at the same time, this way only
-%             current and largets-found numbers need to be passed around.
-%
-
-
 is_prime(Candidate) ->
-    is_prime(Candidate, [2]++lists:seq(3, Candidate - 1, 2)).
+    is_prime(Candidate, 3, round(math:sqrt(Candidate))).
 
-is_prime(Candidate, [Divisor|_])
-    when Candidate rem Divisor == 0 ->
-        false;
-is_prime(Candidate, [_|RemainingDivisors]) ->
-    is_prime(Candidate, RemainingDivisors);
-is_prime(_, []) -> 
-    true.
-
-
-primes(Ceiling) ->
-    [2, 3]++[N || N <- lists:seq(5, Ceiling, 2), is_prime(N) == true].
+is_prime(Candidate, Divisor, _)
+    when
+        Candidate rem Divisor == 0 ->
+            false;
+is_prime(Candidate, Divisor, MaxDivisor) ->
+    case Divisor >= MaxDivisor of
+        true -> true;
+        false -> is_prime(Candidate, Divisor + 2, MaxDivisor)
+    end.
 
 
-prime_factors(Number) ->
-    [N || N <- primes(Number), Number rem N == 0].
+reduced_target(Target) ->
+    Reduced = round(math:sqrt(Target)),
+    Remainder = Reduced rem 2,
+    case Remainder == 0 of
+        true -> Reduced + 1;
+        false -> Reduced
+    end.
+
+
+largest_prime_factor(Target) ->
+    ReducedTarget = reduced_target(Target),
+    largest_prime_factor(Target, ReducedTarget, ReducedTarget - 2, 3).
+
+largest_prime_factor(_, _, CurrentCandidate, LastCandidate)
+    when CurrentCandidate =< LastCandidate ->
+        "N/A";
+largest_prime_factor(Target, ReducedTarget, CurrentCandidate, LastCandidate) ->
+     case (Target rem CurrentCandidate == 0) and is_prime(CurrentCandidate) of
+        true -> CurrentCandidate;
+        false -> largest_prime_factor(Target, ReducedTarget,
+                                      CurrentCandidate - 2, LastCandidate)
+    end.
 
 
 solution(Target) ->
-    lists:last(lists:sort(prime_factors(Target))).
+    largest_prime_factor(Target).
 
 
-% Test case:
 start() ->
-    io:format("~p\n", [solution(13195)]).
-
-% Problem case:
-%start() -> io:format("~p\n", [solution(600851475143)]).
+    io:format("~p\n", [solution(600851475143)]).
