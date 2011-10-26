@@ -1,5 +1,5 @@
 -module(solution_004).
--compile(export_all).
+-export([start/0]).
 
 
 is_num_palindrome(Number) ->
@@ -16,3 +16,14 @@ is_num_palindrome(Number) ->
             [_|LeftRevTail] = LeftReversed,
             LeftRevTail =:= Right
     end.
+
+
+solution(From, To) ->
+    Products = [X * Y || X <- lists:seq(From, To), Y <- lists:seq(From, To)],
+    Palindromes = [N || N <- Products, is_num_palindrome(N)],
+    LargestPalindrome = lists:last(lists:sort(Palindromes)),
+    LargestPalindrome.
+
+
+start() ->
+    io:format("~p\n", [solution(100, 999)]).
