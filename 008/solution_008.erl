@@ -10,28 +10,28 @@ bignumber() ->
     BigNumber.
 
 
-list_conseqs(String) ->
+list_consecs(String) ->
     [Current|RemString] = String,
-    Conseq = [Current],
+    Consec = [Current],
     Collection = [],
-    list_conseqs(RemString, Conseq, Collection).
+    list_consecs(RemString, Consec, Collection).
 
-list_conseqs([], Conseq, Collection) ->
+list_consecs([], Consec, Collection) ->
     lists:sort(
         fun(A, B) -> length(A) < length(B) end,
-        [Conseq|Collection]
+        [Consec|Collection]
     );
-list_conseqs(String, Conseq, Collection) ->
+list_consecs(String, Consec, Collection) ->
     [Current|RemString] = String,
-    case Current == lists:last(Conseq) of
-        true -> list_conseqs(RemString, [Current|Conseq], Collection);
-        false -> list_conseqs(RemString, [Current], [Conseq|Collection])
+    case Current == lists:last(Consec) of
+        true -> list_consecs(RemString, [Current|Consec], Collection);
+        false -> list_consecs(RemString, [Current], [Consec|Collection])
     end.
 
 
 solution() ->
     BigNumber = bignumber(),
-    AllConsecutives = list_conseqs(BigNumber),
+    AllConsecutives = list_consecs(BigNumber),
     AllConsecutives.
 
 
