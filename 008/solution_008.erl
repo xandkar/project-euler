@@ -29,11 +29,13 @@ list_consecs(String, Consec, Collection) ->
     end.
 
 
-solution() ->
+solution(NumConsecutives) ->
     BigNumber = bignumber(),
     AllConsecutives = list_consecs(BigNumber),
-    AllConsecutives.
+    TargetConsecutives =
+        [C || C <- AllConsecutives, length(C) =:= NumConsecutives],
+    TargetConsecutives.
 
 
 start() ->
-    io:format("~p~n", [solution()]).
+    io:format("~p~n", [solution(5)]).
