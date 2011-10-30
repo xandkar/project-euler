@@ -5,36 +5,44 @@
 bignumber() ->
     {ok, FileBin} = file:read_file("bignumber.dat"),
     FileText = binary_to_list(FileBin),
-    NumCharacters = length(FileText),
-    BigNumber = lists:sublist(FileText, NumCharacters - 1), % Dropping "\n"
+    NumChars = length(FileText),
+    BigNumber = lists:sublist(FileText, NumChars - 1), % Dropping "\n"
     BigNumber.
 
 
-list_consecs(String) ->
-    [Current|RemString] = String,
-    Consec = [Current],
-    Collection = [],
-    list_consecs(RemString, Consec, Collection).
+product(List) ->
+    [Head|Tail] = List,
+    product(list_to_integer([Head]), Tail).
 
-list_consecs([], Consec, Collection) ->
-    lists:sort(
-        fun(A, B) -> length(A) < length(B) end,
-        [Consec|Collection]
-    );
-list_consecs(String, Consec, Collection) ->
-    [Current|RemString] = String,
-    case Current == lists:last(Consec) of
-        true -> list_consecs(RemString, [Current|Consec], Collection);
-        false -> list_consecs(RemString, [Current], [Consec|Collection])
+product(Product, List) ->
+    case List =:= [] of
+        true -> Product;
+        false ->
+            [Head|Tail] = List,
+            product(Product * list_to_integer([Head]), Tail)
     end.
 
 
-solution(NumConsecutives) ->
+groups_of(GroupLength, BigNumber) ->
+    Groups = [],
+    Position = 1,
+    groups_of(GroupLength, BigNumber, Groups, Position).
+
+groups_of(GroupLength, BigNumber, Groups, Position) ->
+    Group = lists:sublist(BigNumber, Position, GroupLength),
+    NewGroups = [Group|Groups],
+    case (Position + GroupLength) =:= length(BigNumber) of
+        true -> NewGroups;
+        false -> groups_of(GroupLength, BigNumber, NewGroups, Position + 1)
+    end.
+
+
+solution(GroupLength) ->
     BigNumber = bignumber(),
-    AllConsecutives = list_consecs(BigNumber),
-    TargetConsecutives =
-        [C || C <- AllConsecutives, length(C) =:= NumConsecutives],
-    TargetConsecutives.
+    Groups = groups_of(GroupLength, BigNumber),
+    Products = lists:sort([product(G) || G <- Groups]),
+    LargestProduct = lists:last(Products),
+    LargestProduct.
 
 
 start() ->
