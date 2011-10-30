@@ -3,7 +3,7 @@
 
 
 bignumber() ->
-    {ok, FileBin} = file:read_file("bignumber.dat"),
+    {ok, FileBin} = file:read_file("problem_008.dat"),
     FileText = binary_to_list(FileBin),
     NumChars = length(FileText),
     BigNumber = lists:sublist(FileText, NumChars - 1), % Dropping "\n"
