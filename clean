@@ -1,0 +1,5 @@
+#!/bin/sh
+
+for non_txt in *.beam *.dump *.pyc *.out *.cmi *.cmo *.cmx *.o; do
+    rm ./*/$non_txt
+done
