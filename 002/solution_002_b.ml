@@ -1,19 +1,18 @@
-let rec even_fibs max prev1 prev2 evens' =
-  let current = prev1 + prev2 in
-  match current >= max with
-      true  -> evens'
-    | false ->
-          match current mod 2 == 0 with
-              true  ->
-                even_fibs max prev2 current (current::evens')
-            | false ->
-                even_fibs max prev2 current evens'
+let rec even_fibs = function
+    | max, prev, curr, evens' when curr >= max -> evens'
+    | max, prev, curr, evens' when curr mod 2 == 0 ->
+      even_fibs (max, curr, curr + prev, curr :: evens')
+    | max, prev, curr, evens' ->
+      even_fibs (max, curr, curr + prev, evens')
 
+let even_fibs max =
+    let prev = 2 in
+    let curr = 3 in
+    let init_evens' = [2] in
+      even_fibs (max, prev, curr, init_evens')
 
 let project_euler_002 max =
-  let even_fibs = even_fibs max 1 2 [2] in
-  let solution = List.fold_left (+) 0 even_fibs in
-  Printf.printf "%d\n" solution
-
+    let solution = List.fold_left (+) 0 (even_fibs max) in
+    print_newline (print_int solution)
 
 let () = project_euler_002 4000000
