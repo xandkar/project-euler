@@ -7,7 +7,7 @@ let rec is_palindrome s =
 
 let rec seq = function
     | _, _, [] -> []
-    | max, step, (last::_ as seq') when last >= max -> List.rev seq'
+    | max, step, (last::_ as seq') when last >= max -> seq'
     | max, step, (last::_ as seq') -> seq (max, step, last+step::seq')
 
 let seq first last =
