@@ -30,11 +30,10 @@ let rec pal_products1 = function
     | n1::nums1, nums2, products' ->
       pal_products1 (nums1, nums2, pal_products2 (n1, nums2, products'))
 
-let pal_products nums1 nums2 =
-    pal_products1 (nums1, nums2, [])
-
-let () =
-    let numbers = seq 100 999 in
-    let pal_products = pal_products numbers numbers in
+let project_euler_004 first last =
+    let numbers = seq first last in
+    let pal_products = pal_products1 (numbers, numbers, []) in
     let solution = List.hd (Sort.list (>) pal_products) in
     print_newline (print_int solution)
+
+let () = project_euler_004 100 999
