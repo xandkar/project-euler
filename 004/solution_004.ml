@@ -6,15 +6,14 @@ let rec is_palindrome s =
     | _, _ -> false
 
 let rec seq = function
-    | current, max, step, seq' when current >= max -> List.rev seq'
-    | current, max, step, seq' ->
-      let new_current = current + step in
-      seq (new_current, max, step, new_current::seq')
+    | _, _, [] -> []
+    | max, step, (last::_ as seq') when last >= max -> List.rev seq'
+    | max, step, (last::_ as seq') -> seq (max, step, last+step::seq')
 
 let seq first last =
     let step = 1 in
     let seq' = [first] in
-    seq (first, last, step, seq')
+    seq (last, step, seq')
 
 let rec pal_products2 = function
     | _, [], products' -> products'
