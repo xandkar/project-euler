@@ -1,5 +1,20 @@
 #!/bin/sh
 
-for non_txt in *.beam *.dump *.pyc *.out *.cmi *.cmo *.cmx *.o; do
-    rm ./*/$non_txt
-done
+NON_SRC_EXTENSIONS='
+    *.beam
+    *.dump
+    *.pyc
+    *.out
+    *.cmi
+    *.cmo
+    *.cmx
+    *.o
+'
+
+
+NON_SRC_EXTENSIONS_FIND_SYNTAX=`
+    echo $NON_SRC_EXTENSIONS | sed 's/\ /\ -or\ -name\ /g'
+`
+
+
+find . -name $NON_SRC_EXTENSIONS_FIND_SYNTAX | xargs rm -f
