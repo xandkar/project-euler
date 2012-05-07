@@ -17,14 +17,7 @@ project_euler_010(MaxPrime) ->
 
 
 sieve_primes(Candidates) ->
-    NumCPUs =
-        case erlang:system_info(cpu_topology) of
-            undefined ->
-                1;
-            CPUTopology ->
-                CPUsInfo = proplists:get_value(processor, CPUTopology),
-                length(CPUsInfo)
-        end,
+    NumCPUs = erlang:system_info(schedulers),
     QueuePID = self(),
     NumWorkers = NumCPUs * ?WORKERS_PER_CPU,
     Workers = [
