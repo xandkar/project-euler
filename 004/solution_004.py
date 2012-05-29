@@ -6,7 +6,8 @@ def is_palindrome(n):
 
 
 def project_euler_004(first, last):
-    products = [x * y for x in xrange(first, last+1) for y in xrange(first, last+1)]
+    given_range = xrange(first, last + 1)
+    products = [x * y for x in given_range for y in given_range]
     palindromes = [n for n in products if is_palindrome(n)]
     solution = sorted(palindromes)[-1]
     print solution
