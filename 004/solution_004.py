@@ -2,14 +2,15 @@
 
 
 def is_palindrome(n):
-    return str(n) == str(n)[::-1]
+    n = str(n)
+    return n == n[::-1]
 
 
 def project_euler_004(first, last):
     given_range = xrange(first, last + 1)
-    products = [x * y for x in given_range for y in given_range]
+    products = [a * b for a in given_range for b in given_range]
     palindromes = [n for n in products if is_palindrome(n)]
-    solution = sorted(palindromes)[-1]
+    solution = max(palindromes)
     print solution
 
 
