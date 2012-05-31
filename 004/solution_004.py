@@ -8,7 +8,7 @@ def is_palindrome(n):
 
 def project_euler_004(first, last):
     given_range = xrange(first, last + 1)
-    products = [a * b for a in given_range for b in given_range]
+    products = list(set([a * b for a in given_range for b in given_range]))
     palindromes = [n for n in products if is_palindrome(n)]
     solution = max(palindromes)
     print solution
