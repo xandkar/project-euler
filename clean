@@ -9,6 +9,7 @@ NON_SRC_EXTENSIONS='
     *.cmo
     *.cmx
     *.o
+    *.hi
 '
 
 
