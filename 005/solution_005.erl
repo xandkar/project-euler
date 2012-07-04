@@ -1,29 +1,31 @@
 -module(solution_005).
--export([start/0]).
+-export([main/0]).
 
 
-is_divisible(_, []) ->
-    true;
-is_divisible(Number, [Divisor|Divisors]) ->
-    case Number rem Divisor of
-        0 -> is_divisible(Number, Divisors);
-        _Else -> false
+main() ->
+    project_euler_005(1, 20),
+    halt().
+
+
+project_euler_005(Bottom, Top) ->
+    Solution = smallest_divisible(Bottom, Top),
+    io:format("~b\n", [Solution]).
+
+
+smallest_divisible(Bottom, Top) ->
+    ByRange = lists:seq(Bottom, Top),
+    Init = Top,
+    Step = Top,
+    smallest_divisible(Init, Step, ByRange).
+
+
+smallest_divisible(N, Step, ByRange) ->
+    case is_divisible(N, ByRange) of
+        true -> N;
+        false -> smallest_divisible(N + Step, Step, ByRange)
     end.
 
 
-smallest_no_rem_in_range(Divisors) ->
-    smallest_no_rem_in_range(Divisors, 1).
-
-smallest_no_rem_in_range(Divisors, Count) ->
-    case is_divisible(Count, Divisors) of
-        true -> Count;
-        false -> smallest_no_rem_in_range(Divisors, Count + 1)
-    end.
-
-
-solution(From, To) ->
-    smallest_no_rem_in_range(lists:seq(From, To)).
-
-
-start() ->
-    io:format("~p\n", [solution(1, 20)]).
+is_divisible(_, []) -> true;
+is_divisible(N, [D | _Divisors]) when N rem D =/= 0 -> false;
+is_divisible(N, [_ |  Divisors]) -> is_divisible(N, Divisors).
