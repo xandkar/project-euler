@@ -1,14 +1,22 @@
 let rec is_divisible = function
-    | n, cur, max when cur > max -> true
-    | n, cur, max when not (n mod cur == 0) -> false
-    | n, cur, max -> is_divisible (n, cur+1, max)
+  | n, (bottom, top) when bottom > top -> true
+  | n, (bottom, top) when n mod bottom != 0 -> false
+  | n, (bottom, top) -> is_divisible (n, (bottom + 1, top))
 
-let rec smallest_divisible = function
-    | n, first, last when is_divisible(n, first, last) -> n
-    | n, first, last -> smallest_divisible (n+1, first, last)
 
-let project_euler_005 first last =
-    let solution = smallest_divisible (1, first, last) in
-    print_newline (print_int solution)
+let smallest_divisible (_bottom, top as by_range) =
+  let rec smallest_divisible = function
+    | n, step, by_range when is_divisible (n, by_range) -> n
+    | n, step, by_range -> smallest_divisible (n + step, step, by_range)
+  in
+  let init = top
+  and step = top in
+  smallest_divisible (init, step, by_range)
 
-let () = project_euler_005 1 20
+
+let project_euler_005 by_range =
+  let solution = smallest_divisible by_range in
+  Printf.printf "%d\n" solution
+
+
+let () = project_euler_005 (1, 20)
