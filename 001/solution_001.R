@@ -1,12 +1,13 @@
 #! /usr/bin/env Rscript
 
-project.euler.001 <- function(n) {
-  nums <- 1:(n-1)
-  mults <- nums[nums %% 3 == 0 | nums %% 5 == 0]
-  solution <- sum(mults)
+
+ProjectEuler001 <- function(n) {
+  numbers   <- 1:(n-1)
+  multiples <- numbers[numbers %% 3 == 0 | numbers %% 5 == 0]
+  solution  <- sum(multiples)
 
   cat(solution, "\n")
 }
 
 
-project.euler.001(1000)
+ProjectEuler001(1000)
