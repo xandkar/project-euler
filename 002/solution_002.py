@@ -1,3 +1,6 @@
+#! /usr/bin/env python
+
+
 def fibonacci(ceiling):
     a = 0
     b = 1
@@ -9,4 +12,14 @@ def fibonacci(ceiling):
         b = fib
         fib = a + b
 
-print sum(f for f in fibonacci(4000000) if not f % 2)
+
+def project_euler_002(n):
+    fibs = fibonacci(4000000)
+    fibs_even = filter(lambda n: not n % 2, fibs)
+    solution = sum(fibs_even)
+
+    print solution
+
+
+if __name__ == '__main__':
+    project_euler_002(4000000)
