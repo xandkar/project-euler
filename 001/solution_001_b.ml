@@ -8,10 +8,8 @@ end
 
 
 let project_euler_001 n =
-  let numbers = Stream.upto n in
-  let condition i = i mod 3 == 0 || i mod 5 == 0 in
-  let summer sum i = if condition i then sum + i else sum in
-  let solution = Stream.fold summer 0 numbers in
+  let summer sum i = if i mod 3 == 0 || i mod 5 == 0 then sum + i else sum in
+  let solution = Stream.fold summer 0 (Stream.upto n) in
 
   print_int solution;
   print_newline ()
