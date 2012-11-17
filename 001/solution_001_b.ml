@@ -1,17 +1,20 @@
-let rec mults_of_3n5 = function
-    | 0, mults -> mults
-    | n, mults when (n mod 3 == 0) || (n mod 5 == 0) ->
-      mults_of_3n5 (n - 1, n :: mults)
-    | n, mults ->
-      mults_of_3n5 (n - 1, mults)
+module Stream = struct include Stream
+  let upto n = from (fun i -> if i < n then Some i else None)
 
-let mults_of_3n5 n =
-    let init_mults' = [] in
-    mults_of_3n5 (n, init_mults')
+  let rec fold f acc stream = match peek stream with
+    | Some value -> fold f (junk stream; f acc value) stream
+    | None -> acc
+end
 
-let project_euler_001 ceiling =
-    let n = ceiling - 1 in
-    let solution = List.fold_left (+) 0 (mults_of_3n5 n) in
-    print_newline (print_int solution)
+
+let project_euler_001 n =
+  let numbers = Stream.upto n in
+  let condition i = i mod 3 == 0 || i mod 5 == 0 in
+  let summer sum i = if condition i then sum + i else sum in
+  let solution = Stream.fold summer 0 numbers in
+
+  print_int solution;
+  print_newline ()
+
 
 let () = project_euler_001 1000
