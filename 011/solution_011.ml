@@ -5,9 +5,6 @@ let (|>) x f = f x
 let (|-) f g x = g (f x)
 
 
-module A = Array
-
-
 module L = struct include List
   let max = function
     | x::xs -> fold_left max x xs
@@ -26,6 +23,8 @@ end
 
 
 module Matrix = struct
+  module A = Array
+
   type moore_direction = N | NE | E | SE | S | SW | W | NW
 
   let from_file filename =
@@ -35,50 +34,48 @@ module Matrix = struct
     in
     let space = Str.regexp " +" in
     read []
-    |> L.map (Str.split space |- (L.map int_of_string) |- A.of_list)
+    |> L.map (Str.split space |- L.map int_of_string |- A.of_list)
     |> A.of_list
 
-  let directions = [N; NE; E; SE; S; SW; W; NW]
+  let vector_fwd  vd = L.seq 0   vd    1
+  let vector_flat vd = L.rep 0   vd
+  let vector_rev  vd = L.seq 0 (-vd) (-1)
 
-  let vector_fwd  d = L.seq 0   d    1
-  let vector_flat d = L.rep 0   d
-  let vector_rev  d = L.seq 0 (-d) (-1)
+  let offsets_N  vd = L.combine (vector_flat vd) (vector_rev  vd)
+  let offsets_NE vd = L.combine (vector_fwd  vd) (vector_rev  vd)
+  let offsets_E  vd = L.combine (vector_fwd  vd) (vector_flat vd)
+  let offsets_SE vd = L.combine (vector_fwd  vd) (vector_fwd  vd)
+  let offsets_S  vd = L.combine (vector_flat vd) (vector_fwd  vd)
+  let offsets_SW vd = L.combine (vector_rev  vd) (vector_fwd  vd)
+  let offsets_W  vd = L.combine (vector_rev  vd) (vector_flat vd)
+  let offsets_NW vd = L.combine (vector_rev  vd) (vector_rev  vd)
 
-  let offsets_N  d = L.combine (vector_flat d) (vector_rev  d)
-  let offsets_NE d = L.combine (vector_fwd  d) (vector_rev  d)
-  let offsets_E  d = L.combine (vector_fwd  d) (vector_flat d)
-  let offsets_SE d = L.combine (vector_fwd  d) (vector_fwd  d)
-  let offsets_S  d = L.combine (vector_flat d) (vector_fwd  d)
-  let offsets_SW d = L.combine (vector_rev  d) (vector_fwd  d)
-  let offsets_W  d = L.combine (vector_rev  d) (vector_flat d)
-  let offsets_NW d = L.combine (vector_rev  d) (vector_rev  d)
+  let offsets_of_dir vd = function
+    | N  -> offsets_N  vd
+    | NE -> offsets_NE vd
+    | E  -> offsets_E  vd
+    | SE -> offsets_SE vd
+    | S  -> offsets_S  vd
+    | SW -> offsets_SW vd
+    | W  -> offsets_W  vd
+    | NW -> offsets_NW vd
 
-  let offsets_of_dir d = function
-    | N  -> offsets_N  d
-    | NE -> offsets_NE d
-    | E  -> offsets_E  d
-    | SE -> offsets_SE d
-    | S  -> offsets_S  d
-    | SW -> offsets_SW d
-    | W  -> offsets_W  d
-    | NW -> offsets_NW d
-
-  let offsets d =
-    L.map (offsets_of_dir d) directions
+  let offsets vd =
+    L.map (offsets_of_dir vd) [N; NE; E; SE; S; SW; W; NW]
 
   let is_onside m (r, k) =
     r >= 0 && r < A.length m &&
     k >= 0 && k < A.length m.(0)
 
-  let moore_view m d r k =
+  let moore_view m vd r k =
     let coordinates =
-      L.map (L.map (fun (ro, ko) -> r + ro, k + ko)) (offsets d)
+      L.map (L.map (fun (ro, ko) -> r + ro, k + ko)) (offsets vd)
     in
     let look (rv, kv) = m.(rv).(kv) in
-    L.map ((L.filter (is_onside m)) |- (L.map look)) coordinates
+    L.map (L.filter (is_onside m) |- L.map look) coordinates
 
-  let moore_views d m =
-    A.mapi (fun r row -> A.mapi (fun k _ -> moore_view m d r k) row) m
+  let moore_views vd m =
+    A.mapi (fun r row -> A.mapi (fun k _ -> moore_view m vd r k) row) m
 
   let map f m =
     A.map (A.map f) m
@@ -90,11 +87,11 @@ module Matrix = struct
 end
 
 
-let project_euler_011  problem_data_file  view_depth =
+let project_euler_011  ~data_file:filename  ~view_depth:vd =
   let solution =
-       Matrix.from_file problem_data_file
-    |> Matrix.moore_views view_depth
-    |> Matrix.map (fun views -> L.max (L.map (L.product) views))
+       Matrix.from_file filename
+    |> Matrix.moore_views vd
+    |> Matrix.map (L.map L.product |- L.max)
     |> Matrix.max
   in
 
@@ -102,4 +99,4 @@ let project_euler_011  problem_data_file  view_depth =
   print_newline ()
 
 
-let () = project_euler_011 "problem_011.dat" 4
+let () = project_euler_011 ~data_file:"problem_011.dat" ~view_depth:4
