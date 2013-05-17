@@ -1,3 +1,5 @@
+_build/
+*.native
 *.beam
 *.dump
 *.pyc
