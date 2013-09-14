@@ -5,13 +5,24 @@ let (|>) x f = f x
 let (|-) f g x = g (f x)
 
 
-module L = struct include List
+module L = List
+
+module ListExtra : sig
+  type 'a t = 'a list
+
+  val max : 'a t -> 'a
+  val product : int list -> int
+  val seq : int -> int -> int -> int t
+  val rep : 'a -> int -> 'a t
+end = struct
+  type 'a t = 'a list
+
   let max = function
-    | x::xs -> fold_left max x xs
+    | x::xs -> L.fold_left max x xs
     | [] -> assert false
 
   let product = function
-    | x::xs -> fold_left ( * ) x xs
+    | x::xs -> L.fold_left ( * ) x xs
     | [] -> assert false
 
   let rec seq a b step =
@@ -21,6 +32,7 @@ module L = struct include List
     if times = 0 then [] else x :: rep x (times - 1)
 end
 
+module LE = ListExtra
 
 module Matrix : sig
   type 'a t
@@ -45,9 +57,9 @@ end = struct
     |> L.map (Str.split space |- A.of_list)
     |> A.of_list
 
-  let vector_fwd  vd = L.seq 0   vd    1
-  let vector_flat vd = L.rep 0   vd
-  let vector_rev  vd = L.seq 0 (-vd) (-1)
+  let vector_fwd  vd = LE.seq 0   vd    1
+  let vector_flat vd = LE.rep 0   vd
+  let vector_rev  vd = LE.seq 0 (-vd) (-1)
 
   let offsets_N  vd = L.combine (vector_flat vd) (vector_rev  vd)
   let offsets_NE vd = L.combine (vector_fwd  vd) (vector_rev  vd)
@@ -100,7 +112,7 @@ let project_euler_011  ~data_file:filename  ~view_depth =
     let m = Matrix.of_file filename in
     m |> Matrix.map ~f:(int_of_string)
       |> Matrix.moore_views ~view_depth
-      |> Matrix.map ~f:(L.map L.product |- L.max)
+      |> Matrix.map ~f:(L.map LE.product |- LE.max)
       |> Matrix.max
   in
   print_int solution;
