@@ -22,9 +22,17 @@ module L = struct include List
 end
 
 
-module Matrix = struct
+module Matrix : sig
+  type 'a t
+
+  val from_file : string -> int t
+  val moore_views : int -> 'a t -> ('a list list) t
+  val map : ('a -> 'b) -> 'a t -> 'b t
+  val max : int t -> int
+end = struct
   module A = Array
 
+  type 'a t = 'a array array
   type moore_direction = N | NE | E | SE | S | SW | W | NW
 
   let from_file filename =
