@@ -25,7 +25,7 @@ end
 module Matrix : sig
   type 'a t
 
-  val from_file : string -> int t
+  val of_file : string -> int t
   val moore_views : int -> 'a t -> ('a list list) t
   val map : ('a -> 'b) -> 'a t -> 'b t
   val max : int t -> int
@@ -35,7 +35,7 @@ end = struct
   type 'a t = 'a array array
   type moore_direction = N | NE | E | SE | S | SW | W | NW
 
-  let from_file filename =
+  let of_file filename =
     let ic = open_in filename in
     let rec read ls =
       try read (input_line ic :: ls) with End_of_file -> close_in ic; L.rev ls
@@ -97,7 +97,7 @@ end
 
 let project_euler_011  ~data_file:filename  ~view_depth:vd =
   let solution =
-       Matrix.from_file filename
+       Matrix.of_file filename
     |> Matrix.moore_views vd
     |> Matrix.map (L.map L.product |- L.max)
     |> Matrix.max
