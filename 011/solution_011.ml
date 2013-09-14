@@ -97,12 +97,11 @@ end
 
 let project_euler_011  ~data_file:filename  ~view_depth =
   let solution =
-       Matrix.of_file filename
-    |> Matrix.moore_views ~view_depth
-    |> Matrix.map ~f:(L.map L.product |- L.max)
-    |> Matrix.max
+    let m = Matrix.of_file filename in
+    m |> Matrix.moore_views ~view_depth
+      |> Matrix.map ~f:(L.map L.product |- L.max)
+      |> Matrix.max
   in
-
   print_int solution;
   print_newline ()
 
