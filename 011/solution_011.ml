@@ -71,26 +71,26 @@ end = struct
   let offsets vd =
     L.map (offsets_of_dir vd) [N; NE; E; SE; S; SW; W; NW]
 
-  let is_onside m (r, k) =
-    r >= 0 && r < A.length m &&
-    k >= 0 && k < A.length m.(0)
+  let is_onside t (r, k) =
+    r >= 0 && r < A.length t &&
+    k >= 0 && k < A.length t.(0)
 
-  let moore_view m vd r k =
+  let moore_view t vd r k =
     let coordinates =
       L.map (L.map (fun (ro, ko) -> r + ro, k + ko)) (offsets vd)
     in
-    let look (rv, kv) = m.(rv).(kv) in
-    L.map (L.filter (is_onside m) |- L.map look) coordinates
+    let look (rv, kv) = t.(rv).(kv) in
+    L.map (L.filter (is_onside t) |- L.map look) coordinates
 
-  let moore_views vd m =
-    A.mapi (fun r row -> A.mapi (fun k _ -> moore_view m vd r k) row) m
+  let moore_views vd t =
+    A.mapi (fun r row -> A.mapi (fun k _ -> moore_view t vd r k) row) t
 
-  let map f m =
-    A.map (A.map f) m
+  let map f t =
+    A.map (A.map f) t
 
-  let max m =
+  let max t =
     let max = ref 0 in
-    A.iter (A.iter (fun element -> if element > !max then max := element)) m;
+    A.iter (A.iter (fun element -> if element > !max then max := element)) t;
     !max
 end
 
