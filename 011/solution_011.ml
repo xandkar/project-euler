@@ -26,8 +26,8 @@ module Matrix : sig
   type 'a t
 
   val of_file : string -> int t
-  val moore_views : int -> 'a t -> ('a list list) t
-  val map : ('a -> 'b) -> 'a t -> 'b t
+  val moore_views : 'a t -> view_depth:int -> ('a list list) t
+  val map : 'a t -> f:('a -> 'b) -> 'b t
   val max : int t -> int
 end = struct
   module A = Array
@@ -82,10 +82,10 @@ end = struct
     let look (rv, kv) = t.(rv).(kv) in
     L.map (L.filter (is_onside t) |- L.map look) coordinates
 
-  let moore_views vd t =
-    A.mapi (fun r row -> A.mapi (fun k _ -> moore_view t vd r k) row) t
+  let moore_views t ~view_depth =
+    A.mapi (fun r row -> A.mapi (fun k _ -> moore_view t view_depth r k) row) t
 
-  let map f t =
+  let map t ~f =
     A.map (A.map f) t
 
   let max t =
@@ -95,11 +95,11 @@ end = struct
 end
 
 
-let project_euler_011  ~data_file:filename  ~view_depth:vd =
+let project_euler_011  ~data_file:filename  ~view_depth =
   let solution =
        Matrix.of_file filename
-    |> Matrix.moore_views vd
-    |> Matrix.map (L.map L.product |- L.max)
+    |> Matrix.moore_views ~view_depth
+    |> Matrix.map ~f:(L.map L.product |- L.max)
     |> Matrix.max
   in
 
