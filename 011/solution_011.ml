@@ -25,10 +25,10 @@ end
 module Matrix : sig
   type 'a t
 
-  val of_file : string -> int t
+  val of_file : string -> string t
   val moore_views : 'a t -> view_depth:int -> ('a list list) t
   val map : 'a t -> f:('a -> 'b) -> 'b t
-  val max : int t -> int
+  val max : 'a t -> 'a
 end = struct
   module A = Array
 
@@ -42,7 +42,7 @@ end = struct
     in
     let space = Str.regexp " +" in
     read []
-    |> L.map (Str.split space |- L.map int_of_string |- A.of_list)
+    |> L.map (Str.split space |- A.of_list)
     |> A.of_list
 
   let vector_fwd  vd = L.seq 0   vd    1
@@ -89,7 +89,7 @@ end = struct
     A.map (A.map f) t
 
   let max t =
-    let max = ref 0 in
+    let max = ref t.(0).(0) in
     A.iter (A.iter (fun element -> if element > !max then max := element)) t;
     !max
 end
@@ -98,7 +98,8 @@ end
 let project_euler_011  ~data_file:filename  ~view_depth =
   let solution =
     let m = Matrix.of_file filename in
-    m |> Matrix.moore_views ~view_depth
+    m |> Matrix.map ~f:(int_of_string)
+      |> Matrix.moore_views ~view_depth
       |> Matrix.map ~f:(L.map L.product |- L.max)
       |> Matrix.max
   in
