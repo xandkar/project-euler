@@ -1,6 +1,3 @@
-open Printf
-
-
 let (|>) x f = f x
 let (|-) f g x = g (f x)
 
