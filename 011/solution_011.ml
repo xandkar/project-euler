@@ -58,24 +58,15 @@ end = struct
   let vector_rev  vd = LE.seq ~start:0 ~goal:(-vd) ~step:(-1)
   let vector_flat vd = LE.rep 0 ~times:vd
 
-  let offsets_N  vd = L.combine (vector_flat vd) (vector_rev  vd)
-  let offsets_NE vd = L.combine (vector_fwd  vd) (vector_rev  vd)
-  let offsets_E  vd = L.combine (vector_fwd  vd) (vector_flat vd)
-  let offsets_SE vd = L.combine (vector_fwd  vd) (vector_fwd  vd)
-  let offsets_S  vd = L.combine (vector_flat vd) (vector_fwd  vd)
-  let offsets_SW vd = L.combine (vector_rev  vd) (vector_fwd  vd)
-  let offsets_W  vd = L.combine (vector_rev  vd) (vector_flat vd)
-  let offsets_NW vd = L.combine (vector_rev  vd) (vector_rev  vd)
-
   let offsets_of_dir vd = function
-    | N  -> offsets_N  vd
-    | NE -> offsets_NE vd
-    | E  -> offsets_E  vd
-    | SE -> offsets_SE vd
-    | S  -> offsets_S  vd
-    | SW -> offsets_SW vd
-    | W  -> offsets_W  vd
-    | NW -> offsets_NW vd
+    | N  -> L.combine (vector_flat vd) (vector_rev  vd)
+    | NE -> L.combine (vector_fwd  vd) (vector_rev  vd)
+    | E  -> L.combine (vector_fwd  vd) (vector_flat vd)
+    | SE -> L.combine (vector_fwd  vd) (vector_fwd  vd)
+    | S  -> L.combine (vector_flat vd) (vector_fwd  vd)
+    | SW -> L.combine (vector_rev  vd) (vector_fwd  vd)
+    | W  -> L.combine (vector_rev  vd) (vector_flat vd)
+    | NW -> L.combine (vector_rev  vd) (vector_rev  vd)
 
   let offsets vd =
     L.map (offsets_of_dir vd) [N; NE; E; SE; S; SW; W; NW]
