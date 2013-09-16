@@ -54,9 +54,19 @@ end = struct
     |> L.map (Str.split space |- A.of_list)
     |> A.of_list
 
-  let vector_fwd  vd = LE.seq ~start:0 ~goal:vd    ~step:1
-  let vector_rev  vd = LE.seq ~start:0 ~goal:(-vd) ~step:(-1)
-  let vector_flat vd = LE.rep 0 ~times:vd
+  let mem f =
+    let cache = Hashtbl.create 1 in
+    fun x ->
+      try
+        Hashtbl.find cache x
+      with Not_found ->
+        let y = f x in
+        Hashtbl.replace cache x y;
+        y
+
+  let vector_fwd  = mem (fun vd -> LE.seq ~start:0 ~goal:vd    ~step:1)
+  let vector_rev  = mem (fun vd -> LE.seq ~start:0 ~goal:(-vd) ~step:(-1))
+  let vector_flat = mem (fun vd -> LE.rep 0 ~times:vd)
 
   let offsets_of_dir vd = function
     | N  -> L.combine (vector_flat vd) (vector_rev  vd)
@@ -68,8 +78,9 @@ end = struct
     | W  -> L.combine (vector_rev  vd) (vector_flat vd)
     | NW -> L.combine (vector_rev  vd) (vector_rev  vd)
 
-  let offsets vd =
-    L.map (offsets_of_dir vd) [N; NE; E; SE; S; SW; W; NW]
+  let offsets = mem (fun view_depth ->
+    L.map (offsets_of_dir view_depth) [N; NE; E; SE; S; SW; W; NW]
+  )
 
   let is_onside t (r, k) =
     r >= 0 && r < A.length t &&
