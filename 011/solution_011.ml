@@ -9,8 +9,8 @@ module ListExtra : sig
 
   val max : 'a t -> 'a
   val product : int list -> int
-  val seq : int -> int -> int -> int t
-  val rep : 'a -> int -> 'a t
+  val seq : start:int -> goal:int -> step:int -> int t
+  val rep : 'a -> times:int -> 'a t
 end = struct
   type 'a t = 'a list
 
@@ -22,11 +22,11 @@ end = struct
     | x::xs -> L.fold_left ( * ) x xs
     | [] -> assert false
 
-  let rec seq a b step =
-    if a = b then [] else a :: seq (a + step) b step
+  let rec seq ~start ~goal ~step =
+    if start = goal then [] else start :: seq ~start:(start + step) ~goal ~step
 
-  let rec rep x times =
-    if times = 0 then [] else x :: rep x (times - 1)
+  let rec rep x ~times =
+    if times = 0 then [] else x :: rep x ~times:(times - 1)
 end
 
 module LE = ListExtra
@@ -54,9 +54,9 @@ end = struct
     |> L.map (Str.split space |- A.of_list)
     |> A.of_list
 
-  let vector_fwd  vd = LE.seq 0   vd    1
-  let vector_flat vd = LE.rep 0   vd
-  let vector_rev  vd = LE.seq 0 (-vd) (-1)
+  let vector_fwd  vd = LE.seq ~start:0 ~goal:vd    ~step:1
+  let vector_rev  vd = LE.seq ~start:0 ~goal:(-vd) ~step:(-1)
+  let vector_flat vd = LE.rep 0 ~times:vd
 
   let offsets_N  vd = L.combine (vector_flat vd) (vector_rev  vd)
   let offsets_NE vd = L.combine (vector_fwd  vd) (vector_rev  vd)
