@@ -83,6 +83,7 @@ end = struct
   )
 
   let is_onside t (r, k) =
+    A.length t > 0 &&
     r >= 0 && r < A.length t &&
     k >= 0 && k < A.length t.(0)
 
