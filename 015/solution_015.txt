@@ -1,0 +1,18 @@
+The conceptual solution is, given an m x n grid, m + n choose either m or n:
+
+|       |   |       |
+| m + n |   | m + n |
+|   n   | = |   m   |
+|       |   |       |
+
+So in 2 x 2 case it is:
+
+    ( 2 + 2 choose 2) = (4 choose 2) = 6
+
+and in 20 x 20:
+
+    (20 + 20 choose 20) = (40 choose 20) = 137846528820
+
+So what is there left to do programmatically?:
+    - Implement a binomial function?
+    - Walk the given grid to enumerate paths?
