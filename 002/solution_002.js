@@ -11,7 +11,7 @@ var project_euler_002 = function() {
         fibs.push(fib_last)
         i++
     };
-    var fibs_even = fibs.filter((x) => x % 2 == 0);
+    var fibs_even = fibs.filter((x) => x % 2 === 0);
     var solution = fibs_even.reduce((acc, x, _i, _a) => acc + x, 0);
     console.log("%d", solution);
 }
