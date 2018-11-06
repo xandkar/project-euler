@@ -56,10 +56,11 @@ let solve_by_dyn_prog data =
   sums.(0)
 
 let () =
-  let ic =
+  let ic, bf =
     let ic = ref stdin in
-    Arg.parse [] (fun filename -> ic := open_in filename) "";
-    !ic
+    let bf = ref false in
+    Arg.parse ["-bf", Arg.Set bf, ""] (fun filename -> ic := open_in filename) "";
+    !ic, !bf
   in
   let data = read_data ic in
   close_in ic;
@@ -67,9 +68,7 @@ let () =
     (* Since we do not actually need the path itself, we can just accumulate
      * the largest sum - each of the solutions does just that.
      * *)
-    [ "DP", solve_by_dyn_prog
-    ; "BF", solve_by_brute_force
-    ]
+    ("DP", solve_by_dyn_prog) :: if bf then ["BF", solve_by_brute_force] else []
   in
   List.iter solutions ~f:(fun (label, f) ->
     let t0 = Sys.time () in
