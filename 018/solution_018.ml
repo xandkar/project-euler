@@ -30,6 +30,31 @@ let solve_by_brute_force data =
   walk (0, 0) 0;
   !max
 
+let solve_by_dyn_prog data =
+  (* Imagine a bunch of nested, 3-node subtrees embedded in the given tree.
+   *
+   * Processing from last parents (2nd-to-last row) to the 1st parent (root, in
+   * 1st row), each parent picks the largest of its children and records their
+   * sum (parent + (max child1 child2)), which is the largest sum for this
+   * subtree, so that its own parent can in turn do the same with it,
+   * culminating in root selecting which of the children gives the largest sum.
+   * The resulting value in root's location is the largest sum for the given
+   * tree.
+   * *)
+  let r_bottom       = (Array.length data) - 1 in
+  let r_last_parents = r_bottom - 1 in
+  let r_first_parent = 0 in
+  let sums = Array.copy data.(r_bottom) in
+  for r = r_last_parents downto r_first_parent do
+    for k = 0 to r do
+      let parent      = data.(r).(k) in
+      let child_left  = sums.(k) in
+      let child_right = sums.(k + 1) in
+      sums.(k) <- parent + (max child_left child_right);
+    done
+  done;
+  sums.(0)
+
 let () =
   let ic =
     let ic = ref stdin in
@@ -37,8 +62,18 @@ let () =
     !ic
   in
   let data = read_data ic in
-  let t0 = Sys.time () in
-  let solution_brute_force = solve_by_brute_force data in
-  let t1 = Sys.time () in
-  printf "brute force: %d in %f\n%!" solution_brute_force (t1 -. t0);
-  close_in ic
+  close_in ic;
+  let solutions =
+    (* Since we do not actually need the path itself, we can just accumulate
+     * the largest sum - each of the solutions does just that.
+     * *)
+    [ "DP", solve_by_dyn_prog
+    ; "BF", solve_by_brute_force
+    ]
+  in
+  List.iter solutions ~f:(fun (label, f) ->
+    let t0 = Sys.time () in
+    let result = f data in
+    let t1 = Sys.time () in
+    printf "%s: %d in %f seconds\n%!" label result (t1 -. t0)
+  )
