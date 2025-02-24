@@ -1,5 +1,5 @@
+/target/
 _build/
-target/
 *.native
 *.byte
 *.beam

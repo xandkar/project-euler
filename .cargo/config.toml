@@ -1,0 +1,6 @@
+# https://doc.rust-lang.org/cargo/reference/config.html
+
+[env]
+# Single thread only so that the results are reported in expected order,
+# otherwise they can run in whatever order with N threads.
+RUST_TEST_THREADS = "1"

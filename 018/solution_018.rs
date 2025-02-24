@@ -1,8 +1,8 @@
 use std::{cmp::max, fs, path::Path};
 
-type Data = Vec<Vec<u32>>;
+pub type Data = Vec<Vec<u32>>;
 
-fn data<P: AsRef<Path>>(path: P) -> Data {
+pub fn data<P: AsRef<Path>>(path: P) -> Data {
     fs::read_to_string(path.as_ref())
         .unwrap()
         .lines()
@@ -14,7 +14,7 @@ fn data<P: AsRef<Path>>(path: P) -> Data {
         .collect()
 }
 
-fn solution(data: &Data) -> u32 {
+pub fn solution(data: &Data) -> u32 {
     let mut sums = data.clone();
     let rows = sums.len();
     for r in (0..rows).rev() {
@@ -26,17 +26,4 @@ fn solution(data: &Data) -> u32 {
         }
     }
     sums[0][0]
-}
-
-fn main() {
-    let data = data("./problem_018.dat");
-    println!("{}", solution(&data));
-}
-
-#[test]
-fn test() {
-    let data_test = data("./test.dat");
-    let data_real = data("./problem_018.dat");
-    assert_eq!(23, solution(&data_test));
-    assert_eq!(1074, solution(&data_real));
 }
