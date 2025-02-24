@@ -19,3 +19,9 @@ fn problem_018_real() {
     let data_real = project_euler::problem_018::data("./018/problem_018.dat");
     assert_eq!(1074, project_euler::problem_018::solution(&data_real));
 }
+
+#[test]
+fn problem_067_real() {
+    let data_real = project_euler::problem_018::data("./067/problem_067.dat");
+    assert_eq!(7273, project_euler::problem_018::solution(&data_real));
+}
